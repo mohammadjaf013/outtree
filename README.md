@@ -43,3 +43,6 @@ All output files will be saved to a folder called `outtree/`:
 ---
 
 Feel free to fork and enhance! PRs welcome 🤝
+
+
+[![npm version](https://img.shields.io/npm/v/outtree)](https://www.npmjs.com/package/outtree)
