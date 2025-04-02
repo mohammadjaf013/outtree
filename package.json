@@ -1,7 +1,7 @@
 {
   "name": "outtree",
 
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "CLI tool to generate project tree structure in multiple formats (txt, md, html, json)",
   "main": "tree.js",
   "bin": {
