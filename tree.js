@@ -3,7 +3,6 @@ const path = require('path');
 const readline = require('readline');
 
 const DEFAULT_IGNORE = ['node_modules', '.git', 'dist', 'build'];
-const MAX_DEPTH = 3;
 const root = process.argv[2] || '.';
 const OUT_DIR = path.resolve(process.cwd(), 'outtree');
 
@@ -27,8 +26,21 @@ async function main() {
     format = format.trim().toLowerCase();
     const validFormats = ['html', 'json', 'markdown', 'text', 'all'];
     if (!validFormats.includes(format)) {
-        console.log("Invalid format. Using 'All' as default.");
+        console.log("Invalid format. Using 'all' as default.");
         format = 'all';
+    }
+
+    // Prompt for maximum depth
+    let depthInput = await prompt("Enter maximum depth (or 'all' for unlimited): ");
+    let maxDepth;
+    if (depthInput.trim().toLowerCase() === 'all') {
+        maxDepth = Infinity;
+    } else {
+        maxDepth = parseInt(depthInput.trim(), 10);
+        if (isNaN(maxDepth)) {
+            console.log("Invalid depth input. Using default depth of 3.");
+            maxDepth = 3;
+        }
     }
 
     // Prompt for ignore list
@@ -42,47 +54,47 @@ async function main() {
         IGNORE = ignoreInput.split(",").map((s) => s.trim());
     }
 
-    generateOutput(format, IGNORE);
+    generateOutput(format, IGNORE, maxDepth);
     rl.close();
 }
 
-function generateOutput(format, IGNORE) {
+function generateOutput(format, IGNORE, maxDepth) {
     if (format === 'all') {
-        generateJSONOutput(IGNORE);
-        generateHTMLOutput(IGNORE);
-        generateMarkdownOutput(IGNORE);
-        generateTextOutput(IGNORE);
+        generateJSONOutput(IGNORE, maxDepth);
+        generateHTMLOutput(IGNORE, maxDepth);
+        generateMarkdownOutput(IGNORE, maxDepth);
+        generateTextOutput(IGNORE, maxDepth);
     } else if (format === 'json') {
-        generateJSONOutput(IGNORE);
+        generateJSONOutput(IGNORE, maxDepth);
     } else if (format === 'html') {
-        generateHTMLOutput(IGNORE);
+        generateHTMLOutput(IGNORE, maxDepth);
     } else if (format === 'markdown') {
-        generateMarkdownOutput(IGNORE);
+        generateMarkdownOutput(IGNORE, maxDepth);
     } else {
-        generateTextOutput(IGNORE);
+        generateTextOutput(IGNORE, maxDepth);
     }
 }
 
-function generateJSONOutput(IGNORE) {
-    const output = generateJSON(root, 0, MAX_DEPTH, IGNORE);
+function generateJSONOutput(IGNORE, maxDepth) {
+    const output = generateJSON(root, 0, maxDepth, IGNORE);
     fs.writeFileSync(path.join(OUT_DIR, 'tree.json'), JSON.stringify(output, null, 2));
     console.log(`✅ json output written to ${OUT_DIR}/tree.json`);
 }
 
-function generateHTMLOutput(IGNORE) {
-    const output = generateHTML(root, 0, MAX_DEPTH, IGNORE);
+function generateHTMLOutput(IGNORE, maxDepth) {
+    const output = generateHTML(root, 0, maxDepth, IGNORE);
     fs.writeFileSync(path.join(OUT_DIR, 'tree.html'), output);
     console.log(`✅ html output written to ${OUT_DIR}/tree.html`);
 }
 
-function generateMarkdownOutput(IGNORE) {
-    const output = generateMarkdown(root, 0, MAX_DEPTH, IGNORE);
+function generateMarkdownOutput(IGNORE, maxDepth) {
+    const output = generateMarkdown(root, 0, maxDepth, IGNORE);
     fs.writeFileSync(path.join(OUT_DIR, 'tree.md'), output);
     console.log(`✅ markdown output written to ${OUT_DIR}/tree.md`);
 }
 
-function generateTextOutput(IGNORE) {
-    const output = generateText(root, 0, MAX_DEPTH, IGNORE);
+function generateTextOutput(IGNORE, maxDepth) {
+    const output = generateText(root, 0, maxDepth, IGNORE);
     fs.writeFileSync(path.join(OUT_DIR, 'tree.txt'), output);
     console.log(`✅ text output written to ${OUT_DIR}/tree.txt`);
 }

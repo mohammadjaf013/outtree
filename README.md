@@ -37,7 +37,7 @@ All output files will be saved to a folder called `outtree/`:
 
 ## 🔧 Configuration
 
-- `MAX_DEPTH` is set to `3` by default. You can change it in the code to control how deep the scan goes.
+- `3` The maximum depth for directory scanning is configurable. The default maximum depth is  When running the command, you'll be prompted to enter the maximum depth, or type `all` for unlimited depth.
 - Default ignored directories are: `node_modules`, `.git`, `dist`, `build`. You can override them at runtime via prompt.
 
 ---
